@@ -2,6 +2,10 @@ const axios = require("axios")
 const { Country, Copas, Contador } = require("../db")
 
 async function getCountries() {
+  const existe = await Country.findAll()
+  if (existe.length) {
+    return console.log("recargando")
+  }
   let respuesta = (
     await axios.get("https://restcountries.com/v3/all")
   ).data.map(e => ({
