@@ -2,26 +2,30 @@ const axios = require("axios")
 const { Country, Copas, Contador } = require("../db")
 
 async function getCountries() {
-  const existe = await Country.findAll()
-  if (existe.length) {
-    return console.log("recargando")
+  try {
+    const existe = await Country.findAll()
+    if (existe.length) {
+      return console.log("recargando")
+    }
+    let respuesta = (
+      await axios.get("https://restcountries.com/v3/all")
+    ).data.map(e => ({
+      name: e.name.common,
+      flags: e.flags[1],
+      region: e.region ? e.region : "Has no region",
+      capital: e.capital ? e.capital[0] : "Has no capital",
+      subregion: e.subregion ? e.subregion : "Has no subregion",
+      area: e.area,
+      population: e.population ? e.population : 0,
+      id: e.cca3 ? e.cca3 : "Has no id",
+    }))
+    Country.bulkCreate(respuesta)
+    world(mundiales)
+    crearpredicciones(predicciones)
+    console.log("database created")
+  } catch (error) {
+    console.log(error)
   }
-  let respuesta = (
-    await axios.get("https://restcountries.com/v3/all")
-  ).data.map(e => ({
-    name: e.name.common,
-    flags: e.flags[1],
-    region: e.region ? e.region : "Has no region",
-    capital: e.capital ? e.capital[0] : "Has no capital",
-    subregion: e.subregion ? e.subregion : "Has no subregion",
-    area: e.area,
-    population: e.population ? e.population : 0,
-    id: e.cca3 ? e.cca3 : "Has no id",
-  }))
-  Country.bulkCreate(respuesta)
-  world(mundiales)
-  crearpredicciones(predicciones)
-  console.log("database created")
 }
 const predicciones = [
   ["Argentina", 0, "https://flagcdn.com/w320/ar.png"],

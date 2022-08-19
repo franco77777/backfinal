@@ -64,10 +64,14 @@ const getContador = async (req, res) => {
 }
 
 const putContador = async (req, res, next) => {
-  const { id } = req.params
-  const resultado = await Contador.findByPk(id)
-  resultado.numeros = req.body[0]
-  await resultado.save()
-  res.json(resultado)
+ try {
+   const { id } = req.params
+   const resultado = await Contador.findByPk(id)
+   resultado.numeros = req.body[0]
+   await resultado.save()
+   res.json(resultado)
+ } catch (error) {
+  return res.jon(error)
+ }
 }
 module.exports = { getPaises, getPais, postActivity, getContador, putContador }
